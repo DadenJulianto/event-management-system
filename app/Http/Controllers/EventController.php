@@ -9,22 +9,52 @@ class EventController extends Controller
 {
     public function index()
     {
-        // Ubah array di session jadi object supaya view tidak perlu diubah banyak
-        $events = collect(session('events', []))
-            ->map(fn ($e) => (object) [
-                'name'       => $e['name'],
-                'location'   => $e['location'],
-                'start_date' => Carbon::parse($e['start_date']),
-                'end_date'   => Carbon::parse($e['end_date']),
-            ]);
+        $events = $this->eventList();
 
-        return view('events.index', compact('events'));
+        return view('public.events.index', compact('events'));
+    }
+
+    public function dashboardIndex()
+    {
+        $events = $this->eventList();
+
+        return view('dashboard.eo.events.index', compact('events'));
+    }
+
+    private function eventList()
+    {
+        return collect(session('events', []))
+            ->map(function ($event, $id) {
+                $startDate = Carbon::parse($event['start_date']);
+                $endDate = Carbon::parse($event['end_date']);
+                $today = today();
+
+                return (object) [
+                    'id'         => $id,
+                    'name'       => $event['name'],
+                    'location'   => $event['location'],
+                    'start_date' => $startDate,
+                    'end_date'   => $endDate,
+                    'status'     => $endDate->lt($today)
+                        ? 'Selesai'
+                        : ($startDate->gt($today) ? 'Akan datang' : 'Berlangsung'),
+                ];
+            });
+    }
+
+    public function dashboardShow(int $id)
+    {
+        $event = $this->eventList()->firstWhere('id', $id);
+
+        abort_if($event === null, 404);
+
+        return view('dashboard.eo.events.show', compact('event'));
     }
 
     public function create()
     {
         $events = session('events', []);
-        return view('events.create', compact('events'));
+        return view('dashboard.eo.events.create', compact('events'));
     }
 
     public function store(Request $request)
@@ -50,7 +80,23 @@ class EventController extends Controller
         session(['events' => $events]);
 
         return redirect()
-            ->route('events.index')
+            ->route('dashboard.eo.events.index')
             ->with('success', 'Event berhasil ditambahkan.');
+    }
+
+    public function destroy(int $id)
+    {
+        $events = session('events', []);
+        if (isset($events[$id])) {
+            unset($events[$id]);
+            session(['events' => array_values($events)]); // Reindex the array
+            return redirect()
+                ->route('dashboard.eo.events.index')
+                ->with('success', 'Event berhasil dihapus.');
+        }
+
+        return redirect()
+            ->route('dashboard.eo.events.index')
+            ->with('error', 'Event tidak ditemukan.');
     }
 }

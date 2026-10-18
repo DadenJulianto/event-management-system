@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.public')
  
 @section('title', 'Tambah Event')
  
@@ -9,7 +9,7 @@
                 <h1 class="text-lg font-semibold">Tambah Event</h1>
             </div>
  
-            <form action="{{ route('events.store') }}" method="POST" novalidate class="px-6 py-5 space-y-5">
+            <form action="{{ route('dashboard.eo.events.store') }}" method="POST" novalidate class="px-6 py-5 space-y-5">
                 @csrf
  
                 {{-- Nama event --}}
@@ -73,7 +73,7 @@
                             class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
                         Simpan
                     </button>
-                    <a href="{{ route('events.index') }}"
+                    <a href="{{ route('dashboard.eo.events.index') }}"
                        class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
                         Batal
                     </a>

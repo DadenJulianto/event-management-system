@@ -11,8 +11,8 @@
 
     <nav class="flex-1 overflow-y-auto p-3 space-y-1">
         <a href="{{ route('dashboard.eo') }}" class="{{ $link }} {{ request()->routeIs('dashboard.eo') ? $on : $off }}">Dashboard</a>
-        <a href="#" class="{{ $link }} {{ $off }}">Event Saya</a>
-        <a href="#" class="{{ $link }} {{ $off }}">Buat Event</a>
+        <a href="{{ route('dashboard.eo.events.index') }}" class="{{ $link }} {{ request()->routeIs('dashboard.eo.events.index') ? $on : $off }}">Event Saya</a>
+        <a href="{{ route('dashboard.eo.events.create') }}" class="{{ $link }} {{ request()->routeIs('dashboard.eo.events.create') ? $on : $off }}">Buat Event</a>
         <a href="#" class="{{ $link }} {{ $off }}">Tiket</a>
         <a href="#" class="{{ $link }} {{ $off }}">Peserta</a>
         <a href="#" class="{{ $link }} {{ $off }}">Staff</a>
